@@ -8,6 +8,7 @@ export default {
     extend: {
       colors: {
         'dark-blue': '#00001a',
+        'highlight': '#f15e51'
       },
     },
   },
