@@ -1,4 +1,5 @@
 import highlightArticleImage from "./assets/image-web-3-desktop.jpg"
+import articleImage from "./assets/image-top-laptops.jpg"
 
 export function App() {
   return (
@@ -39,9 +40,9 @@ export function App() {
             <li className="py-6 border-b solid border-slate-400">
               <div className="text-white">
                 <a href="#">
-                  <h4 className="text-lg font-bold pb-1 hover:text-yellow-500">
+                  <h3 className="text-lg font-bold pb-1 hover:text-yellow-500">
                     Hydrogen VS Electric Cars
-                  </h4>
+                  </h3>
                   <p className="text-sm">
                     Will hydrogen-fueled cars ever catch up to EVs?
                   </p>
@@ -51,9 +52,9 @@ export function App() {
             <li className="py-6 border-b solid border-slate-400">
               <div className="text-white">
                 <a href="#">
-                  <h4 className="text-lg font-bold pb-1 hover:text-yellow-500">
+                  <h3 className="text-lg font-bold pb-1 hover:text-yellow-500">
                     The Downsides of AI Artistry
-                  </h4>
+                  </h3>
                   <p className="text-sm">
                     What are the possible adverse effects of on-demand AI image
                     generation?
@@ -64,9 +65,9 @@ export function App() {
             <li className="pt-6">
               <div className="text-white">
                 <a href="#">
-                  <h4 className="text-lg font-bold pb-1 hover:text-yellow-500">
+                  <h3 className="text-lg font-bold pb-1 hover:text-yellow-500">
                     Is VC Funding Drying Up?
-                  </h4>
+                  </h3>
                   <p className="text-sm">
                     Private funding by VC firms is down 50% YOY. We take a look
                     at what that means.
@@ -78,14 +79,67 @@ export function App() {
         </aside>
       </div>
 
-      <div
-        id="news-section"
-        className="bg-purple-800 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6 w-full"
-      >
-        <article className="bg-blue-500 h-12"></article>
-        <article className="bg-blue-500 h-12"></article>
-        <article className="bg-blue-500 h-12"></article>
-        <article className="bg-blue-500 h-12"></article>
+      <div className="py-6 grid grid-cols-1 lg:grid-cols-4 gap-6 w-full">
+        <article>
+          <a href="#" className="flex gap-4">
+            <div className="w-20 min-w-10 object-contain overflow-hidden">
+              <img src={articleImage} alt="" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold mb-2 hover:text-highlight">
+                Reviving Retro PCs
+              </h4>
+              <p className="text-sm text-gray-600">
+                What happens when old PCs are given modern upgrades?
+              </p>
+            </div>
+          </a>
+        </article>
+        <article>
+          <a href="#" className="flex gap-4">
+            <div className="w-20 min-w-10 object-contain overflow-hidden">
+              <img src={articleImage} alt="" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold mb-2 hover:text-highlight">
+                Top 10 Laptops of 2022
+              </h4>
+              <p className="text-sm text-gray-600">
+                Our best picks for various needs and budgets.
+              </p>
+            </div>
+          </a>
+        </article>
+        <article>
+          <a href="#" className="flex gap-4">
+            <div className="w-20 min-w-10 object-contain overflow-hidden">
+              <img src={articleImage} alt="" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold mb-2 hover:text-highlight">
+                The Growth of Gaming
+              </h4>
+              <p className="text-sm text-gray-600">
+                How the pandemic has sparked fresh opportunities.
+              </p>
+            </div>
+          </a>
+        </article>
+        <article>
+          <a href="#" className="flex gap-4">
+            <div className="w-20 min-w-10 object-contain overflow-hidden">
+              <img src={articleImage} alt="" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold mb-2 hover:text-highlight">
+                Reviving Retro PCs
+              </h4>
+              <p className="text-sm text-gray-600">
+                What happens when old PCs are given modern upgrades?
+              </p>
+            </div>
+          </a>
+        </article>
       </div>
     </div>
   )
