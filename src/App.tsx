@@ -1,10 +1,46 @@
+import logo from "./assets/logo.svg"
 import highlightArticleImage from "./assets/image-web-3-desktop.jpg"
 import articleImage from "./assets/image-top-laptops.jpg"
 
 export function App() {
   return (
     <div className="max-w-7xl m-auto h-full px-4">
-      <header className="bg-orange-500 w-full h-12 py-8"></header>
+      <header className="w-full py-8 flex justify-between items-center">
+        <a href="#">
+          <img src={logo} alt="" />
+        </a>
+        <nav>
+          <ul className="flex gap-10">
+            <li>
+              <a
+                href="#"
+                title="New"
+                className="text-gray-600 hover:text-dark-blue"
+              >
+                New
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                title="Popular"
+                className="text-gray-600 hover:text-dark-blue"
+              >
+                Popular
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                title="Trending"
+                className="text-gray-600 hover:text-dark-blue"
+              >
+                Trending
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </header>
 
       <div className="flex flex-col lg:flex-row gap-6 py-6">
         <section className="lg:flex-1 w-full">

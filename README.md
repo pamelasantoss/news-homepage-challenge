@@ -48,3 +48,17 @@ export default tseslint.config({
   },
 })
 ```
+
+APIs:
+- https://newsapi.org/docs/get-started
+- https://www.postman.com/api-evangelist/newscred/request/pq6345l/articles
+- https://open-platform.theguardian.com/access/
+- https://www.bbc.co.uk/developer/technology/apis.html
+
+Checklist:
+- [ ] Criar menu mobile
+- [ ] Criar barra de busca no header
+- [ ] Criar um botão de filtro
+- [ ] Testar informações vindas das APIs
+- [ ] Exibir notícias vindas das APIs (ver se é possível trazer várias categorias de fontes diferentes)
+- [ ] Separar alguns componentes da página em componentes menores
