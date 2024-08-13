@@ -1,8 +1,30 @@
 import logo from "./assets/logo.svg"
 import highlightArticleImage from "./assets/image-web-3-desktop.jpg"
 import articleImage from "./assets/image-top-laptops.jpg"
+import axios from "axios"
+import { useEffect, useState } from "react"
 
 export function App() {
+  const [news, setNews] = useState([])
+
+  const fetchNews = async () => {
+    const response = await axios.get("https://newsapi.org/v2/top-headlines", {
+      params: {
+        country: "br",
+        pageSize: 10,
+        apiKey: "bf2221da190b474c9a534058cb683759"
+      }
+    })
+
+    setNews(response.data)
+  }
+
+  useEffect(() => {
+    fetchNews()
+  }, [])
+
+  console.log("Notícias: ", news)
+
   return (
     <div className="max-w-7xl m-auto h-full px-4">
       <header className="w-full py-8 flex justify-between items-center">
