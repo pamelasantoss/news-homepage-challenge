@@ -1,19 +1,17 @@
 import { useContext } from "react"
-import highlightArticleImage from "../../assets/image-web-3-desktop.jpg"
 import { NewsContext } from "../../contexts/NewsContext"
 
 export function HighlightNews() {
   const { highlightNews } = useContext(NewsContext)
+  const imagePlaceholder = "https://placehold.co/900x600"
 
   return (
     <section className="lg:flex-1 w-full">
       {highlightNews.map(article => (
         <article key={article.publishedAt} className="h-full">
-          <div className="w-full max-h-80 object-contain overflow-hidden">
+          <div className="w-full max-h-[500px] object-contain overflow-hidden">
             <img
-              src={
-                article.urlToImage ? article.urlToImage : highlightArticleImage
-              }
+              src={article.urlToImage ? article.urlToImage : imagePlaceholder}
               alt=""
             />
           </div>

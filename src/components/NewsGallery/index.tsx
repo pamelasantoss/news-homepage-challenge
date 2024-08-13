@@ -1,10 +1,9 @@
 import { useContext } from "react"
 import { NewsContext } from "../../contexts/NewsContext"
 
-import articleImage from "../../assets/image-top-laptops.jpg"
-
 export function NewsGallery() {
   const { galleryNews } = useContext(NewsContext)
+  const imagePlaceholder = "https://placehold.co/600x350"
 
   return (
     <div className="py-6 grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
@@ -18,7 +17,7 @@ export function NewsGallery() {
           >
             <div className="w-full object-contain overflow-hidden">
               <img
-                src={article.urlToImage ? article.urlToImage : articleImage}
+                src={article.urlToImage ? article.urlToImage : imagePlaceholder}
                 alt=""
               />
             </div>

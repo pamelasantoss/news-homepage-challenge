@@ -1,5 +1,11 @@
 import axios from "axios"
-import { createContext, ReactNode, useEffect, useState } from "react"
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState
+} from "react"
 
 interface NewsArticleStructure {
   author: string
@@ -16,9 +22,12 @@ interface NewsArticleStructure {
 }
 
 interface NewsContextType {
+  fetchNews: (query?: string) => Promise<void>
   highlightNews: NewsArticleStructure[]
   sidebarNews: NewsArticleStructure[]
   galleryNews: NewsArticleStructure[]
+  searchTerm: string
+  handleChangeSearchTerm: (value: string) => void
 }
 
 interface NewsProviderProps {
@@ -34,14 +43,18 @@ export function NewsProvider({ children }: NewsProviderProps) {
   const [sidebarNews, setSidebarNews] = useState<NewsArticleStructure[]>([])
   const [galleryNews, setGalleryNews] = useState<NewsArticleStructure[]>([])
 
-  const fetchNews = async () => {
+  const [searchTerm, setSearchTerm] = useState("")
+
+  const fetchNews = useCallback(async (query?: string) => {
+    const urlSearch = query ? "everything" : "top-headlines"
     // TODO: create a loading
     try {
       const latestNewsResponse = await axios.get(
-        "https://newsapi.org/v2/top-headlines",
+        `https://newsapi.org/v2/${urlSearch}`,
         {
           params: {
-            sources: "bbc-news", // Start with a neutral source
+            q: query,
+            ...(!query && { sources: "bbc-news" }),
             pageSize: 10,
             apiKey: "bf2221da190b474c9a534058cb683759" // TODO: put this in an env file
           }
@@ -52,11 +65,15 @@ export function NewsProvider({ children }: NewsProviderProps) {
     } catch (error) {
       console.error("Something went wrong...", error)
     }
+  }, [])
+
+  const handleChangeSearchTerm = (value: string) => {
+    setSearchTerm(value)
   }
 
   useEffect(() => {
     fetchNews()
-  }, [])
+  }, [fetchNews])
 
   useEffect(() => {
     const firstNews = latestNews.slice(0, 1)
@@ -71,9 +88,12 @@ export function NewsProvider({ children }: NewsProviderProps) {
   return (
     <NewsContext.Provider
       value={{
+        fetchNews,
         highlightNews,
         sidebarNews,
-        galleryNews
+        galleryNews,
+        searchTerm,
+        handleChangeSearchTerm
       }}
     >
       {children}
