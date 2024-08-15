@@ -56,6 +56,9 @@ export function NewsProvider({ children }: NewsProviderProps) {
             q: filters?.keyword,
             language: filters?.language,
             sortBy: filters?.sortby,
+            ...(filters?.source && { sources: filters?.source }),
+            ...(filters?.dateFrom && { from: filters?.dateFrom }),
+            ...(filters?.dateTo && { to: filters?.dateTo }),
             ...(!filters?.keyword && { sources: "bbc-news" }),
             pageSize: 10,
             apiKey: "bf2221da190b474c9a534058cb683759" // TODO: put this in an env file

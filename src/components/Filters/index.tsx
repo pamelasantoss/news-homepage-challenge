@@ -1,11 +1,13 @@
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import { NewsContext } from "../../contexts/NewsContext"
-import * as Checkbox from "@radix-ui/react-checkbox"
 import * as RadioGroup from "@radix-ui/react-radio-group"
 import { CheckIcon } from "@radix-ui/react-icons"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { DateRange, DayPicker } from "react-day-picker"
+import "react-day-picker/dist/style.css"
+import { format } from "date-fns"
 
 interface FiltersProps {
   onCloseFilters: () => void
@@ -15,8 +17,11 @@ const filtersSchema = z
   .object({
     keyword: z.string(),
     language: z.string(),
+    source: z.string(),
     sortby: z.enum(["relevancy", "popularity", "publishedAt"]),
-    categories: z.array(z.string())
+    dateFrom: z.string().nullable(),
+    dateTo: z.string().nullable(),
+    category: z.string()
   })
   .superRefine(({ keyword, language }, ctx) => {
     if (language !== "" && keyword === "") {
@@ -34,7 +39,6 @@ export function Filters({ onCloseFilters }: FiltersProps) {
   const {
     register,
     handleSubmit,
-    getValues,
     setValue,
     control,
     formState: { errors }
@@ -43,11 +47,16 @@ export function Filters({ onCloseFilters }: FiltersProps) {
     defaultValues: {
       keyword: "",
       sortby: "publishedAt",
-      categories: []
+      dateFrom: null,
+      dateTo: null,
+      category: ""
     }
   })
 
   const { fetchNews } = useContext(NewsContext)
+  const [searchFromToDates, setSearchFromToDates] = useState<
+    DateRange | undefined
+  >()
 
   const onSubmit = async (data: filtersFormData) => {
     console.log(data)
@@ -55,18 +64,21 @@ export function Filters({ onCloseFilters }: FiltersProps) {
     await fetchNews(data)
   }
 
-  const handleCategorySelection = (categoryId: string) => {
-    const currentCategoriesSelected = getValues("categories")
+  useEffect(() => {
+    const dateFrom =
+      searchFromToDates && searchFromToDates.from
+        ? format(searchFromToDates.from, "yyyy-MM-dd")
+        : null
+    const dateTo =
+      searchFromToDates && searchFromToDates.to
+        ? format(searchFromToDates.to, "yyyy-MM-dd")
+        : null
 
-    if (currentCategoriesSelected.includes(categoryId)) {
-      setValue(
-        "categories",
-        currentCategoriesSelected.filter(id => id !== categoryId)
-      )
-    } else {
-      setValue("categories", [...currentCategoriesSelected, categoryId])
+    if (dateFrom && dateTo) {
+      setValue("dateFrom", dateFrom)
+      setValue("dateTo", dateTo)
     }
-  }
+  }, [register, searchFromToDates, setValue])
 
   const allLanguagesAvailable = [
     { id: "ar", label: "Arabic" },
@@ -127,13 +139,23 @@ export function Filters({ onCloseFilters }: FiltersProps) {
           className="w-full p-3 ps-4 text-sm text-gray-600 border border-gray-300"
           {...register("language")}
         >
-          <option value="0">Choose a language</option>
+          <option value="">Choose a language</option>
           {allLanguagesAvailable.map(option => (
             <option key={option.id} value={option.id}>
               {option.label}
             </option>
           ))}
         </select>
+      </div>
+
+      <div>
+        <h5 className="mb-3">Choose your favorite source</h5>
+        <input
+          type="text"
+          placeholder="Type your favorite source. Ex.: BBC News"
+          className="block w-full p-3 ps-4 text-sm text-gray-600 border border-gray-300"
+          {...register("source")}
+        />
       </div>
 
       <div>
@@ -172,28 +194,47 @@ export function Filters({ onCloseFilters }: FiltersProps) {
       </div>
 
       <div>
+        <h5 className="mb-3">Choose the date</h5>
+        <DayPicker
+          mode="range"
+          selected={searchFromToDates}
+          onSelect={setSearchFromToDates}
+        />
+      </div>
+
+      <div>
         <h5 className="mb-3">Category</h5>
-        {allNewsCategories.map(category => (
-          <div className="flex items-center mb-2" key={category.id}>
-            <Checkbox.Root
-              className="flex h-[20px] w-[20px] appearance-none items-center justify-center bg-white border border-dark-blue focus:shadow-[0_0_0_1px] focus:shadow-dark-blue outline-none"
-              id={category.id}
-              value={category.id}
-              {...register("categories")}
-              onCheckedChange={() => handleCategorySelection(category.id)}
+        <Controller
+          control={control}
+          name="category"
+          render={({ field }) => (
+            <RadioGroup.Root
+              className="flex flex-col gap-2"
+              onValueChange={field.onChange}
+              value={field.value}
             >
-              <Checkbox.Indicator className="text-dark-blue">
-                <CheckIcon />
-              </Checkbox.Indicator>
-            </Checkbox.Root>
-            <label
-              className="pl-2 text-sm leading-none text-gray-600"
-              htmlFor={category.id}
-            >
-              {category.label}
-            </label>
-          </div>
-        ))}
+              {allNewsCategories.map(option => (
+                <div className="flex items-center" key={option.id}>
+                  <RadioGroup.Item
+                    id={option.id}
+                    value={option.id}
+                    className="bg-white w-[20px] h-[20px] border border-dark-blue focus:shadow-[0_0_0_1px] focus:shadow-dark-blue outline-none cursor-pointer"
+                  >
+                    <RadioGroup.Indicator className="text-dark-blue flex items-center justify-center">
+                      <CheckIcon />
+                    </RadioGroup.Indicator>
+                  </RadioGroup.Item>
+                  <label
+                    className="pl-2 text-sm leading-none text-gray-600"
+                    htmlFor={option.id}
+                  >
+                    {option.label}
+                  </label>
+                </div>
+              ))}
+            </RadioGroup.Root>
+          )}
+        />
       </div>
 
       <div>
