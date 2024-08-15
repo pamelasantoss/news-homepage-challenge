@@ -11,29 +11,47 @@ interface FiltersProps {
   onCloseFilters: () => void
 }
 
-const filtersSchema = z.object({
-  keyword: z.string(),
-  sortby: z.enum(["relevancy", "popularity", "publishedAt"]),
-  categories: z.array(z.string())
-})
+const filtersSchema = z
+  .object({
+    keyword: z.string(),
+    language: z.string(),
+    sortby: z.enum(["relevancy", "popularity", "publishedAt"]),
+    categories: z.array(z.string())
+  })
+  .superRefine(({ keyword, language }, ctx) => {
+    if (language !== "" && keyword === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "You must add a keyword to use the language option",
+        path: ["keyword"]
+      })
+    }
+  })
 
 export type filtersFormData = z.infer<typeof filtersSchema>
 
 export function Filters({ onCloseFilters }: FiltersProps) {
-  const { register, handleSubmit, getValues, setValue, control } =
-    useForm<filtersFormData>({
-      resolver: zodResolver(filtersSchema),
-      defaultValues: {
-        keyword: "",
-        sortby: "publishedAt",
-        categories: []
-      }
-    })
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    setValue,
+    control,
+    formState: { errors }
+  } = useForm<filtersFormData>({
+    resolver: zodResolver(filtersSchema),
+    defaultValues: {
+      keyword: "",
+      sortby: "publishedAt",
+      categories: []
+    }
+  })
 
   const { fetchNews } = useContext(NewsContext)
 
   const onSubmit = async (data: filtersFormData) => {
     console.log(data)
+    onCloseFilters()
     await fetchNews(data)
   }
 
@@ -49,6 +67,22 @@ export function Filters({ onCloseFilters }: FiltersProps) {
       setValue("categories", [...currentCategoriesSelected, categoryId])
     }
   }
+
+  const allLanguagesAvailable = [
+    { id: "ar", label: "Arabic" },
+    { id: "de", label: "German" },
+    { id: "en", label: "English" },
+    { id: "es", label: "Spanish" },
+    { id: "fr", label: "French" },
+    { id: "he", label: "Hebrew" },
+    { id: "it", label: "Italian" },
+    { id: "nl", label: "Dutch" },
+    { id: "no", label: "Norwegian" },
+    { id: "pt", label: "Portuguese" },
+    { id: "ru", label: "Russian" },
+    { id: "ud", label: "Urdu" },
+    { id: "zh", label: "Chinese" }
+  ]
 
   const allSortByOptios = [
     { id: "relevancy", label: "Most Relevant" },
@@ -76,9 +110,30 @@ export function Filters({ onCloseFilters }: FiltersProps) {
         <input
           type="text"
           placeholder="Search for keyword..."
-          className="block w-full p-4 ps-6 text-sm text-gray-600 border border-gray-300 bg-gray-50"
+          className="block w-full p-3 ps-4 text-sm text-gray-600 border border-gray-300 data-[error=true]:border-red-600"
           {...register("keyword")}
+          data-error={errors.keyword ? true : false}
         />
+        {errors.keyword?.message && (
+          <span className="text-sm text-red-600">
+            {errors.keyword?.message}
+          </span>
+        )}
+      </div>
+
+      <div>
+        <h5 className="mb-3">Choose the news language</h5>
+        <select
+          className="w-full p-3 ps-4 text-sm text-gray-600 border border-gray-300"
+          {...register("language")}
+        >
+          <option value="0">Choose a language</option>
+          {allLanguagesAvailable.map(option => (
+            <option key={option.id} value={option.id}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
@@ -144,7 +199,6 @@ export function Filters({ onCloseFilters }: FiltersProps) {
       <div>
         <button
           type="submit"
-          onClick={onCloseFilters}
           className="text-white end-2.5 bottom-2.5 bg-dark-blue hover:bg-highlight focus:ring-1 focus:outline-none focus:ring-highlight font-medium text-sm px-4 py-2"
         >
           Apply filters

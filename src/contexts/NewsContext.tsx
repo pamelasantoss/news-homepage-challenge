@@ -44,7 +44,9 @@ export function NewsProvider({ children }: NewsProviderProps) {
 
   const fetchNews = useCallback(async (filters?: filtersFormData) => {
     const urlSearch =
-      filters?.keyword || filters?.sortby ? "everything" : "top-headlines"
+      filters?.keyword || filters?.language || filters?.sortby
+        ? "everything"
+        : "top-headlines"
     // TODO: create a loading
     try {
       const latestNewsResponse = await axios.get(
@@ -52,6 +54,7 @@ export function NewsProvider({ children }: NewsProviderProps) {
         {
           params: {
             q: filters?.keyword,
+            language: filters?.language,
             sortBy: filters?.sortby,
             ...(!filters?.keyword && { sources: "bbc-news" }),
             pageSize: 10,
