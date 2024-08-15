@@ -27,6 +27,7 @@ interface NewsContextType {
   highlightNews: NewsArticleStructure[]
   sidebarNews: NewsArticleStructure[]
   galleryNews: NewsArticleStructure[]
+  isLoading: boolean
 }
 
 interface NewsProviderProps {
@@ -36,41 +37,48 @@ interface NewsProviderProps {
 export const NewsContext = createContext({} as NewsContextType)
 
 export function NewsProvider({ children }: NewsProviderProps) {
+  const [isLoading, setIsLoading] = useState(false)
   const [latestNews, setLatestNews] = useState<NewsArticleStructure[]>([])
 
   const [highlightNews, setHighlightNews] = useState<NewsArticleStructure[]>([])
   const [sidebarNews, setSidebarNews] = useState<NewsArticleStructure[]>([])
   const [galleryNews, setGalleryNews] = useState<NewsArticleStructure[]>([])
 
-  const fetchNews = useCallback(async (filters?: filtersFormData) => {
-    const urlSearch =
-      filters?.keyword || filters?.language || filters?.sortby
-        ? "everything"
-        : "top-headlines"
-    // TODO: create a loading
-    try {
-      const latestNewsResponse = await axios.get(
-        `https://newsapi.org/v2/${urlSearch}`,
-        {
-          params: {
-            q: filters?.keyword,
-            language: filters?.language,
-            sortBy: filters?.sortby,
-            ...(filters?.source && { sources: filters?.source }),
-            ...(filters?.dateFrom && { from: filters?.dateFrom }),
-            ...(filters?.dateTo && { to: filters?.dateTo }),
-            ...(!filters?.keyword && { sources: "bbc-news" }),
-            pageSize: 10,
-            apiKey: "bf2221da190b474c9a534058cb683759" // TODO: put this in an env file
-          }
-        }
-      )
+  const fetchNews = useCallback(
+    async (filters?: filtersFormData) => {
+      setIsLoading(true)
 
-      setLatestNews(latestNewsResponse.data.articles)
-    } catch (error) {
-      console.error("Something went wrong...", error)
-    }
-  }, [])
+      const urlSearch =
+        filters?.keyword || filters?.language || filters?.sortby
+          ? "everything"
+          : "top-headlines"
+
+      try {
+        const latestNewsResponse = await axios.get(
+          `https://newsapi.org/v2/${urlSearch}`,
+          {
+            params: {
+              q: filters?.keyword,
+              language: filters?.language,
+              sortBy: filters?.sortby,
+              ...(filters?.source && { sources: filters?.source }),
+              ...(filters?.dateFrom && { from: filters?.dateFrom }),
+              ...(filters?.dateTo && { to: filters?.dateTo }),
+              ...(!filters?.keyword && { sources: "bbc-news" }),
+              pageSize: 10,
+              apiKey: "bf2221da190b474c9a534058cb683759" // TODO: put this in an env file
+            }
+          }
+        )
+
+        setLatestNews(latestNewsResponse.data.articles)
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Something went wrong...", error)
+      }
+    },
+    [setIsLoading]
+  )
 
   useEffect(() => {
     fetchNews()
@@ -92,7 +100,8 @@ export function NewsProvider({ children }: NewsProviderProps) {
         fetchNews,
         highlightNews,
         sidebarNews,
-        galleryNews
+        galleryNews,
+        isLoading
       }}
     >
       {children}
