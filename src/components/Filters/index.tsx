@@ -1,30 +1,155 @@
-import { FormEvent, useContext } from "react"
+import { useContext } from "react"
 import { NewsContext } from "../../contexts/NewsContext"
+import * as Checkbox from "@radix-ui/react-checkbox"
+import * as RadioGroup from "@radix-ui/react-radio-group"
+import { CheckIcon } from "@radix-ui/react-icons"
+import { Controller, useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-export function Filters() {
-  const { fetchNews, searchTerm, handleChangeSearchTerm } =
-    useContext(NewsContext)
+interface FiltersProps {
+  onCloseFilters: () => void
+}
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    await fetchNews(searchTerm)
+const filtersSchema = z.object({
+  keyword: z.string(),
+  sortby: z.enum(["relevancy", "popularity", "publishedAt"]),
+  categories: z.array(z.string())
+})
+
+export type filtersFormData = z.infer<typeof filtersSchema>
+
+export function Filters({ onCloseFilters }: FiltersProps) {
+  const { register, handleSubmit, getValues, setValue, control } =
+    useForm<filtersFormData>({
+      resolver: zodResolver(filtersSchema),
+      defaultValues: {
+        keyword: "",
+        sortby: "publishedAt",
+        categories: []
+      }
+    })
+
+  const { fetchNews } = useContext(NewsContext)
+
+  const onSubmit = async (data: filtersFormData) => {
+    console.log(data)
+    await fetchNews(data)
   }
 
+  const handleCategorySelection = (categoryId: string) => {
+    const currentCategoriesSelected = getValues("categories")
+
+    if (currentCategoriesSelected.includes(categoryId)) {
+      setValue(
+        "categories",
+        currentCategoriesSelected.filter(id => id !== categoryId)
+      )
+    } else {
+      setValue("categories", [...currentCategoriesSelected, categoryId])
+    }
+  }
+
+  const allSortByOptios = [
+    { id: "relevancy", label: "Most Relevant" },
+    { id: "popularity", label: "Most Popular" },
+    { id: "publishedAt", label: "Newest" }
+  ]
+
+  const allNewsCategories = [
+    { id: "business", label: "Business" },
+    { id: "entertainment", label: "Entertainment" },
+    { id: "general", label: "General" },
+    { id: "health", label: "Health" },
+    { id: "science", label: "Science" },
+    { id: "sports", label: "Sports" },
+    { id: "technology", label: "Technology" }
+  ]
+
   return (
-    <form onSubmit={handleSubmit} className="relative flex min-w-full">
-      <input
-        type="text"
-        placeholder="Search for a news"
-        className="block w-full p-4 ps-6 text-sm text-gray-600 border border-gray-300 bg-gray-50"
-        value={searchTerm}
-        onChange={e => handleChangeSearchTerm(e.target.value)}
-      />
-      <button
-        type="submit"
-        className="text-white absolute end-2.5 bottom-2.5 bg-dark-blue hover:bg-highlight focus:ring-1 focus:outline-none focus:ring-highlight font-medium text-sm px-4 py-2"
-      >
-        Search
-      </button>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="relative flex flex-col gap-6 min-w-full"
+    >
+      <div>
+        <h5 className="mb-3">Filters</h5>
+        <input
+          type="text"
+          placeholder="Search for keyword..."
+          className="block w-full p-4 ps-6 text-sm text-gray-600 border border-gray-300 bg-gray-50"
+          {...register("keyword")}
+        />
+      </div>
+
+      <div>
+        <h5 className="mb-3">Sort by</h5>
+        <Controller
+          control={control}
+          name="sortby"
+          render={({ field }) => (
+            <RadioGroup.Root
+              className="flex flex-col gap-2"
+              onValueChange={field.onChange}
+              value={field.value}
+            >
+              {allSortByOptios.map(option => (
+                <div className="flex items-center" key={option.id}>
+                  <RadioGroup.Item
+                    id={option.id}
+                    value={option.id}
+                    className="bg-white w-[20px] h-[20px] border border-dark-blue focus:shadow-[0_0_0_1px] focus:shadow-dark-blue outline-none cursor-pointer"
+                  >
+                    <RadioGroup.Indicator className="text-dark-blue flex items-center justify-center">
+                      <CheckIcon />
+                    </RadioGroup.Indicator>
+                  </RadioGroup.Item>
+                  <label
+                    className="pl-2 text-sm leading-none text-gray-600"
+                    htmlFor={option.id}
+                  >
+                    {option.label}
+                  </label>
+                </div>
+              ))}
+            </RadioGroup.Root>
+          )}
+        />
+      </div>
+
+      <div>
+        <h5 className="mb-3">Category</h5>
+        {allNewsCategories.map(category => (
+          <div className="flex items-center mb-2" key={category.id}>
+            <Checkbox.Root
+              className="flex h-[20px] w-[20px] appearance-none items-center justify-center bg-white border border-dark-blue focus:shadow-[0_0_0_1px] focus:shadow-dark-blue outline-none"
+              id={category.id}
+              value={category.id}
+              {...register("categories")}
+              onCheckedChange={() => handleCategorySelection(category.id)}
+            >
+              <Checkbox.Indicator className="text-dark-blue">
+                <CheckIcon />
+              </Checkbox.Indicator>
+            </Checkbox.Root>
+            <label
+              className="pl-2 text-sm leading-none text-gray-600"
+              htmlFor={category.id}
+            >
+              {category.label}
+            </label>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          onClick={onCloseFilters}
+          className="text-white end-2.5 bottom-2.5 bg-dark-blue hover:bg-highlight focus:ring-1 focus:outline-none focus:ring-highlight font-medium text-sm px-4 py-2"
+        >
+          Apply filters
+        </button>
+      </div>
     </form>
   )
 }

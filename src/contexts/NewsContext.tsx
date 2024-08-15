@@ -6,6 +6,7 @@ import {
   useEffect,
   useState
 } from "react"
+import { filtersFormData } from "../components/Filters"
 
 interface NewsArticleStructure {
   author: string
@@ -22,12 +23,10 @@ interface NewsArticleStructure {
 }
 
 interface NewsContextType {
-  fetchNews: (query?: string) => Promise<void>
+  fetchNews: (filters?: filtersFormData) => Promise<void>
   highlightNews: NewsArticleStructure[]
   sidebarNews: NewsArticleStructure[]
   galleryNews: NewsArticleStructure[]
-  searchTerm: string
-  handleChangeSearchTerm: (value: string) => void
 }
 
 interface NewsProviderProps {
@@ -43,18 +42,18 @@ export function NewsProvider({ children }: NewsProviderProps) {
   const [sidebarNews, setSidebarNews] = useState<NewsArticleStructure[]>([])
   const [galleryNews, setGalleryNews] = useState<NewsArticleStructure[]>([])
 
-  const [searchTerm, setSearchTerm] = useState("")
-
-  const fetchNews = useCallback(async (query?: string) => {
-    const urlSearch = query ? "everything" : "top-headlines"
+  const fetchNews = useCallback(async (filters?: filtersFormData) => {
+    const urlSearch =
+      filters?.keyword || filters?.sortby ? "everything" : "top-headlines"
     // TODO: create a loading
     try {
       const latestNewsResponse = await axios.get(
         `https://newsapi.org/v2/${urlSearch}`,
         {
           params: {
-            q: query,
-            ...(!query && { sources: "bbc-news" }),
+            q: filters?.keyword,
+            sortBy: filters?.sortby,
+            ...(!filters?.keyword && { sources: "bbc-news" }),
             pageSize: 10,
             apiKey: "bf2221da190b474c9a534058cb683759" // TODO: put this in an env file
           }
@@ -66,10 +65,6 @@ export function NewsProvider({ children }: NewsProviderProps) {
       console.error("Something went wrong...", error)
     }
   }, [])
-
-  const handleChangeSearchTerm = (value: string) => {
-    setSearchTerm(value)
-  }
 
   useEffect(() => {
     fetchNews()
@@ -91,9 +86,7 @@ export function NewsProvider({ children }: NewsProviderProps) {
         fetchNews,
         highlightNews,
         sidebarNews,
-        galleryNews,
-        searchTerm,
-        handleChangeSearchTerm
+        galleryNews
       }}
     >
       {children}

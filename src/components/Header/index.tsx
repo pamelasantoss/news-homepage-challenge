@@ -5,6 +5,8 @@ import { Filters } from "../Filters"
 export function Header() {
   const [openFilters, setOpenFilters] = useState(false)
 
+  const handleCloseFiltersDrawer = () => setOpenFilters(false)
+
   return (
     <>
       <header className="w-full py-8 flex flex-col lg:flex-row justify-between items-center gap-6">
@@ -25,7 +27,7 @@ export function Header() {
         className={`fixed z-10 top-0 left-0 p-4 w-3/4 lg:w-1/4 h-full bg-white transition-transform duration-300 ease-in-out transform ${openFilters ? "translate-x-0" : "-translate-x-full"}`}
       >
         <button onClick={() => setOpenFilters(false)}>Fechar!</button>
-        <Filters />
+        <Filters onCloseFilters={handleCloseFiltersDrawer} />
       </div>
 
       {openFilters && <div className="fixed inset-0 bg-black opacity-50" />}
