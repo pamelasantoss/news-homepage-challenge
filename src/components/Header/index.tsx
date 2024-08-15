@@ -30,7 +30,12 @@ export function Header() {
         <Filters onCloseFilters={handleCloseFiltersDrawer} />
       </div>
 
-      {openFilters && <div className="fixed inset-0 bg-black opacity-50" />}
+      {openFilters && (
+        <div
+          className="fixed inset-0 bg-black opacity-50"
+          onClick={() => setOpenFilters(false)}
+        />
+      )}
     </>
   )
 }

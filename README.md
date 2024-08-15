@@ -55,6 +55,8 @@ APIs:
 - https://open-platform.theguardian.com/access/ || https://open-platform.theguardian.com/documentation/item -> https://content.guardianapis.com/search?api-key=1ec85e52-6822-4252-8ded-eabc89906391
 - https://www.bbc.co.uk/developer/technology/apis.html
 
-Checklist:
-- [ ] Criar um botão de filtro
-- [ ] Criar um loading para a página
+http://localhost:8080/
+
+docker-compose up --build
+
+docker-compose stop
