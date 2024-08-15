@@ -8,7 +8,6 @@ import { Loader } from "./components/Loader"
 
 export function App() {
   const { isLoading } = useContext(NewsContext)
-  console.log(isLoading)
 
   return (
     <div className="max-w-7xl m-auto h-full px-4">

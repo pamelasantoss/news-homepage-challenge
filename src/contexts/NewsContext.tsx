@@ -37,6 +37,8 @@ interface NewsProviderProps {
 export const NewsContext = createContext({} as NewsContextType)
 
 export function NewsProvider({ children }: NewsProviderProps) {
+  const newsAPIKey = import.meta.env.VITE_NEWS_API_KEY
+
   const [isLoading, setIsLoading] = useState(false)
   const [latestNews, setLatestNews] = useState<NewsArticleStructure[]>([])
 
@@ -66,7 +68,7 @@ export function NewsProvider({ children }: NewsProviderProps) {
               ...(filters?.dateTo && { to: filters?.dateTo }),
               ...(!filters?.keyword && { sources: "bbc-news" }),
               pageSize: 10,
-              apiKey: "bf2221da190b474c9a534058cb683759" // TODO: put this in an env file
+              apiKey: newsAPIKey
             }
           }
         )

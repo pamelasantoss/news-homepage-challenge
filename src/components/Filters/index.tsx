@@ -59,7 +59,6 @@ export function Filters({ onCloseFilters }: FiltersProps) {
   >()
 
   const onSubmit = async (data: filtersFormData) => {
-    console.log(data)
     onCloseFilters()
     await fetchNews(data)
   }
