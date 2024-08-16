@@ -1,62 +1,32 @@
-# React + TypeScript + Vite
+## Innoscripta Front-end Challenge | Pamela Santos
+Aplication that shows the forecast according to the geolocation of the browser or if the user doesn't want to active it, the location can be typed by him.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<img src="./application1.png" alt="Innoscripta Challenge" />
+<img src="./application2.png" alt="Innoscripta Challenge" />
 
-Currently, two official plugins are available:
+#### APIs
+- [News API](https://newsapi.org/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#### Technologies
+- Aplication created with [Vite](https://vitejs.dev/), [React](https://react.dev/) and [TypeScript](https://www.typescriptlang.org/)
+- Styling with [Tailwind CSS](https://tailwindcss.com/) and some components from [Radix UI](https://www.radix-ui.com/primitives/docs/overview/introduction)
 
-## Expanding the ESLint configuration
+#### Run the application
+- Must have [node](https://nodejs.org/en/) and [Docker](https://www.docker.com/) installed on the computer.
+- Create a file `.env` with the API key **News API** on this format:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+    VITE_NEWS_API_KEY={#value}
+- Run the command `npm install` to install all the dependencies used inside the application
+- The project will open in the localhost at the `:5173` after run `npm run dev`
+- To build the files for production, you need to run `npm run build` and then run `npm run preview`
 
-- Configure the top-level `parserOptions` property like this:
+#### Run the application with Docker
+- Open the Docker app
+- Run the command `docker-compose up --build` or `sudo docker-compose up --build`
+- You will be able to see the project open in the localhost at the `:8080`
+- Stopping the application, type `ctrl + c` and then run `docker-compose stop`
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
-
-APIs:
-- https://newsapi.org/docs/get-started
-- https://www.postman.com/api-evangelist/newscred/request/pq6345l/articles
-- https://open-platform.theguardian.com/access/ || https://open-platform.theguardian.com/documentation/item -> https://content.guardianapis.com/search?api-key=1ec85e52-6822-4252-8ded-eabc89906391
-- https://www.bbc.co.uk/developer/technology/apis.html
-
-http://localhost:8080/
-
-docker-compose up --build
-
-docker-compose stop
+#### Issues / Challenges
+- Unfortunately, I only used one data source to create the page. I didn't have time to integrate more than one, but I tried to create as many filters as possible from the News API.
+- The layout was inspired in one of the Frontend Mentor challenge, but with more features.
+- The application needs a few improvements, such as, the components could be more organized, the filters could be more better worked and I could explore different ways to fetch and customize the homepage news.
