@@ -1,3 +1,4 @@
+
 ## Innoscripta Front-end Challenge | Pamela Santos
 Aplication that shows the forecast according to the geolocation of the browser or if the user doesn't want to active it, the location can be typed by him.
 
@@ -13,9 +14,11 @@ Aplication that shows the forecast according to the geolocation of the browser o
 
 #### Run the application
 - Must have [node](https://nodejs.org/en/) and [Docker](https://www.docker.com/) installed on the computer.
-- Create a file `.env` with the API key **News API** on this format:
+- Clone this repository
+- Create a `.env` file with the API key **News API** on this format:
 
-    VITE_NEWS_API_KEY={#value}
+>     VITE_NEWS_API_KEY={#value}
+
 - Run the command `npm install` to install all the dependencies used inside the application
 - The project will open in the localhost at the `:5173` after run `npm run dev`
 - To build the files for production, you need to run `npm run build` and then run `npm run preview`
